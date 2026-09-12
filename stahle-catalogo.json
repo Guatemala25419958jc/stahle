@@ -1,0 +1,36 @@
+{
+  "marca": "Stahlé",
+  "eslogan": "Diseño con carácter. Hecho para durar.",
+  "pais": "Guatemala",
+  "contacto": {
+    "whatsapp": "+502 4737 9912",
+    "instagram": "https://www.instagram.com/__stahle__/",
+    "facebook": "https://www.facebook.com/profile.php?id=61590468502123",
+    "tiktok": "https://www.tiktok.com/@stahle_"
+  },
+  "sitio": {
+    "url": "https://stahle-catalogo.stahleegt.chatgpt.site",
+    "project_id": "appgprj_6aa09fd888588191b4e16faafc39d31e",
+    "ultimo_commit": "0e13bfd5d779452af3afd8cb767ab88dc913d058",
+    "acceso_actual": "privado"
+  },
+  "entrega": "Fabricamos y entregamos inicialmente en Ciudad de Guatemala y municipios cercanos. Consulta disponibilidad para otros departamentos.",
+  "anticipo": {
+    "porcentaje": 50,
+    "condicion": "Se solicita 50% de anticipo al confirmar diseño, medidas y cotización. El saldo se cancela antes de la entrega o instalación."
+  },
+  "colecciones": ["Obsidian", "Savia", "Áurea", "Vértice"],
+  "productos": [
+    {"slug":"mesa-obsidian-i","nombre":"Mesa de centro Eclipse","coleccion":"Obsidian","ambiente":"Sala","galeria":6},
+    {"slug":"mesa-raiz","nombre":"Mesa de comedor Raíz","coleccion":"Savia","ambiente":"Comedor","galeria":8},
+    {"slug":"mesa-umbral","nombre":"Mesa de centro Umbral","coleccion":"Áurea","ambiente":"Sala","galeria":6},
+    {"slug":"espejo-trama","nombre":"Espejo Trama","coleccion":"Vértice","ambiente":"Dormitorio","galeria":5},
+    {"slug":"toallero-mano","nombre":"Toallero Nudo","coleccion":"Vértice","ambiente":"Baño","galeria":4},
+    {"slug":"vinera-reserva","nombre":"Vinera Reserva","coleccion":"Vértice","ambiente":"Cocina","galeria":6}
+  ],
+  "politicas": {
+    "privacidad": "/privacidad",
+    "condiciones_cotizacion": "/condiciones",
+    "nota": "Los conceptos de diseño se ofrecen para fabricación personalizada y no representan necesariamente piezas fabricadas o disponibles de inmediato."
+  }
+}
