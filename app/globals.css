@@ -214,3 +214,5 @@
 @media(max-width:520px){.admin-stats{grid-template-columns:1fr}.admin-header h1{font-size:34px}.admin-user span{display:none}.admin-panel-head{display:block}.admin-search{margin-top:18px}.admin-auth-card{padding:34px 24px}}
 
 .admin-product-form{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;margin-bottom:24px}.admin-product-form input,.admin-product-form select{border:1px solid #cfc0b1;background:#fffaf4;padding:12px;color:#332a22;outline:0}.admin-table-row button{justify-self:end}@media(max-width:850px){.admin-product-form{grid-template-columns:1fr 1fr}.admin-product-form .admin-primary{grid-column:1/-1;justify-content:center}}@media(max-width:520px){.admin-product-form{grid-template-columns:1fr}}
+
+.admin-upload{display:grid;gap:5px;border:1px dashed #bcae9f;padding:10px 12px;color:#695c50;font-size:11px;letter-spacing:.05em}.admin-upload input{border:0;padding:0;background:none}.admin-upload small{font-size:11px;color:#94877a}@media(max-width:850px){.admin-upload{grid-column:1/-1}}
