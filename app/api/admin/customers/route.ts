@@ -1,0 +1,4 @@
+import { NextResponse } from "next/server";
+function db(): D1Database { const value=(process.env as unknown as {DB?:D1Database}).DB; if(!value) throw new Error("D1 binding DB is not available"); return value; }
+export async function GET(){try{const r=await db().prepare("SELECT * FROM customers ORDER BY created_at DESC").all();return NextResponse.json(r.results)}catch{return NextResponse.json({error:"No se pudo consultar clientes"},{status:500})}}
+export async function POST(req:Request){try{const b=await req.json();if(!b.name)return NextResponse.json({error:"Falta el nombre"},{status:400});const id=b.id??crypto.randomUUID();await db().prepare("INSERT INTO customers (id,name,phone,email,notes) VALUES (?,?,?,?,?)").bind(id,b.name,b.phone??"",b.email??"",b.notes??"").run();return NextResponse.json({id},{status:201})}catch{return NextResponse.json({error:"No se pudo guardar el cliente"},{status:500})}}
