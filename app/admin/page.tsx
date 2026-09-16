@@ -12,7 +12,8 @@ const initialQuotes: Quote[] = [
 ];
 
 export default function AdminPage() {
-  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authError, setAuthError] = useState(false);
   const [authorized, setAuthorized] = useState(false);
   const [section, setSection] = useState("Resumen");
   const [query, setQuery] = useState("");
@@ -23,7 +24,7 @@ export default function AdminPage() {
   ), [quotes, query]);
 
   if (!authorized) {
-    return <main className="admin-auth"><div className="admin-auth-card"><div className="admin-mark">S</div><p className="admin-eyebrow">STAHLÉ · PANEL PRIVADO</p><h1>Administración</h1><p>Acceso exclusivo para el equipo de Stahlé.</p><form onSubmit={(event) => { event.preventDefault(); if (email.trim().toLowerCase() === ADMIN_EMAIL) setAuthorized(true); }}><label>Correo del administrador<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="stahleegt@gmail.com" required /></label>{email && email.trim().toLowerCase() !== ADMIN_EMAIL && <small className="admin-error">Usa el correo autorizado para continuar.</small>}<button className="admin-primary" type="submit">Entrar al panel</button></form></div></main>;
+    return <main className="admin-auth"><div className="admin-auth-card"><div className="admin-mark">S</div><p className="admin-eyebrow">STAHLÉ · PANEL PRIVADO</p><h1>Administración</h1><p>Acceso exclusivo para el equipo de Stahlé.</p><form onSubmit={async (event) => { event.preventDefault(); setAuthError(false); const response = await fetch("/api/admin/auth", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({password}) }); if (response.ok) setAuthorized(true); else setAuthError(true); }}><label>Contraseña de administrador<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña privada" required /></label>{authError && <small className="admin-error">Contraseña incorrecta.</small>}<button className="admin-primary" type="submit">Entrar al panel</button></form></div></main>;
   }
 
   const nav = [
