@@ -6,7 +6,10 @@ import { sites } from "./build/sites-vite-plugin";
 const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
 
-const { d1, r2 } = { d1: null, r2: null };
+// The production Site provides this R2 bucket through the same binding name.
+// Keeping the binding in Wrangler's generated config makes it available to
+// route handlers in the deployed Worker, not only during local previews.
+const { d1, r2 } = { d1: null, r2: "IMAGES" };
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
@@ -28,7 +31,7 @@ const localBindingConfig = {
     ? [
         {
           binding: r2,
-          bucket_name: "site-creator-r2",
+          bucket_name: "stahle-images",
         },
       ]
     : [],
