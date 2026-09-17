@@ -24,6 +24,14 @@ function normalize(row: Record<string, unknown>): PublicProduct {
     images: parse<string[]>(row.images, base?.images || [])
   } as PublicProduct;
 }
+function dedupeProducts(items: PublicProduct[]) {
+  const byKey = new Map<string, PublicProduct>();
+  for (const item of items) {
+    const key = item.name.trim().toLowerCase().replace(/\\s+/g, " ");
+    if (key) byKey.set(key, item);
+  }
+  return [...byKey.values()];
+}
 
 export default function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -33,11 +41,11 @@ export default function Page({ params }: { params: Promise<{ slug: string }> }) 
 
   useEffect(() => {
     const local = JSON.parse(window.localStorage.getItem("stahle_admin_products") || "[]") as Record<string, unknown>[];
-    if (local.length) setItems(local.map(normalize).filter((item) => item.room === slug));
+    if (local.length) setItems(dedupeProducts(local.map(normalize).filter((item) => item.room === slug)));
     fetch("/api/admin/products").then((response) => response.ok ? response.json() : []).then((rows: Record<string, unknown>[]) => {
       if (Array.isArray(rows) && rows.length) {
         const combined = [...rows, ...local.filter((localItem) => !rows.some((row) => String(row.id) === String(localItem.id)))];
-        setItems(combined.map(normalize).filter((item) => item.room === slug));
+        setItems(dedupeProducts(combined.map(normalize).filter((item) => item.room === slug)));
       }
     }).catch(() => undefined);
   }, [slug]);
