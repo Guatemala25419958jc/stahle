@@ -33,7 +33,8 @@ function materialValue(value: Product["materials"]): string {
 export default function EditarProducto() {
   const [product, setProduct] = useState<Product | null>(null);
   const [images, setImages] = useState<GalleryImage[]>([]);
-  const [cover, setCover] = useState(0);\n  const [replaceIndex, setReplaceIndex] = useState<number | null>(null);
+  const [cover, setCover] = useState(0);
+  const [replaceIndex, setReplaceIndex] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
