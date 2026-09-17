@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { BarChart3, ClipboardList, LogOut, Package, Plus, Search, Settings2, Users, Trash2, Star } from "lucide-react";
-import { products as publicProducts } from "../data";
+import { products as publicProducts, heroImage } from "../data";
 
 const ADMIN_EMAIL = "stahleegt@gmail.com";
 const statuses = ["Pendiente", "En proceso", "Cotizada", "Cerrada"] as const;
