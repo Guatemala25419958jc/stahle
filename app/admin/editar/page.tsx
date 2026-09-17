@@ -31,7 +31,7 @@ function materialValue(value: Product["materials"]): string {
 }
 
 export default function EditarProducto() {
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);\n  const [isNew, setIsNew] = useState(false);
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [cover, setCover] = useState(0);
   const [replaceIndex, setReplaceIndex] = useState<number | null>(null);
@@ -41,7 +41,14 @@ export default function EditarProducto() {
   const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get("id") || "";
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id") || "";
+    const nuevo = params.get("nuevo") === "1";
+    if (nuevo) {
+      setIsNew(true);
+      setProduct({ id: "new", name: "", description: "", collection: "obsidian", room: "sala", materials: "", dimensions: "", price: "" });
+      return;
+    }
     fetch("/api/admin/products")
       .then((r) => r.ok ? r.json() : [])
       .then((items: Product[]) => {
@@ -98,7 +105,7 @@ export default function EditarProducto() {
       const response = await fetch("/api/admin/products", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...product, images: ordered, materials: materialValue(product.materials).split(",").map((x) => x.trim()).filter(Boolean) }),
+        body: JSON.stringify({ ...productPayload, images: ordered, materials: materialValue(product.materials).split(",").map((x) => x.trim()).filter(Boolean) }),
       });
       if (!response.ok) throw new Error("No se pudieron guardar los cambios.");
       setImages(ordered.map((url) => ({ url }))); setCover(0); setMessage("Cambios guardados correctamente.");
@@ -123,7 +130,7 @@ export default function EditarProducto() {
     </aside>
     <section className="admin-edit-content">
       <div className="admin-edit-breadcrumb"><a href="/admin">Administrar galería</a><span>/</span><span>Editar producto</span></div>
-      <header className="admin-edit-titlebar"><div><p className="admin-eyebrow">EDITOR DE PRODUCTO</p><h1>{product.name}</h1></div><a className="admin-outline-button" href="/admin"><ArrowLeft size={16} /> Volver a la galería</a></header>
+      <header className="admin-edit-titlebar"><div><p className="admin-eyebrow">{isNew ? "NUEVO PRODUCTO" : "EDITOR DE PRODUCTO"}</p><h1>{isNew ? "Agregar producto" : product.name}</h1></div><a className="admin-outline-button" href="/admin"><ArrowLeft size={16} /> Volver a la galería</a></header>
       <form onSubmit={save} className="admin-edit-layout">
         <section className="admin-edit-gallery">
           <div className="admin-edit-main-image">{mainImage ? <img src={mainImage} alt={product.name} /> : <ImagePlus size={42} />}</div>
@@ -146,7 +153,7 @@ export default function EditarProducto() {
           <label>Precio<div className="admin-price-input"><span>$</span><input value={product.price || ""} onChange={(e) => update("price", e.target.value)} /></div></label>
           {error && <p className="admin-error">{error}</p>}{message && <p className="admin-success">{message}</p>}
           <button className="admin-primary admin-save-button" disabled={saving || !canSave} type="submit"><Save size={17} />{saving ? "Guardando…" : "Guardar cambios"}</button>
-          <div className="admin-danger-zone"><button className="admin-danger-button" type="button" onClick={removeProduct}><Trash2 size={16} /> Eliminar producto</button><small>Esta acción no se puede deshacer.</small></div>
+          {!isNew && <div className="admin-danger-zone"><button className="admin-danger-button" type="button" onClick={removeProduct}><Trash2 size={16} /> Eliminar producto</button><small>Esta acción no se puede deshacer.</small></div>}
         </section>
       </form>
     </section>
