@@ -32,8 +32,13 @@ export default function Page({ params }: { params: Promise<{ slug: string }> }) 
   const [filter, setFilter] = useState("Todos");
 
   useEffect(() => {
+    const local = JSON.parse(window.localStorage.getItem("stahle_admin_products") || "[]") as Record<string, unknown>[];
+    if (local.length) setItems(local.map(normalize).filter((item) => item.room === slug));
     fetch("/api/admin/products").then((response) => response.ok ? response.json() : []).then((rows: Record<string, unknown>[]) => {
-      if (Array.isArray(rows) && rows.length) setItems(rows.map(normalize).filter((item) => item.room === slug));
+      if (Array.isArray(rows) && rows.length) {
+        const combined = [...rows, ...local.filter((localItem) => !rows.some((row) => String(row.id) === String(localItem.id)))];
+        setItems(combined.map(normalize).filter((item) => item.room === slug));
+      }
     }).catch(() => undefined);
   }, [slug]);
 
