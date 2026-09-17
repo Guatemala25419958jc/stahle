@@ -53,7 +53,6 @@ export default function AdminPage() {
 
   const nav = [
     {label:"Resumen", icon:BarChart3},
-    {label:"Resumen", icon:BarChart3},
     {label:"Administrar galería", icon:Package}
   ];
 
