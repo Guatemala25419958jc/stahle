@@ -53,12 +53,17 @@ export default function EditarProducto() {
     fetch("/api/admin/products")
       .then((r) => r.ok ? r.json() : [])
       .then((items: Product[]) => {
-        const found = items.find((item) => String(item.id) === id) || catalog.find((item) => item.slug === id);
-        if (found) {
-          const raw = found as Product & { slug?: string }; const normalized = { ...raw, id: String(raw.id || raw.slug) };
-          setProduct(normalized);
-          setImages(listValue(normalized.images).map((url) => ({ url })));
+        const local = JSON.parse(window.localStorage.getItem("stahle_admin_products") || "[]") as Product[];
+        const found = items.find((item) => String(item.id) === id)
+          || local.find((item) => String(item.id) === id)
+          || catalog.find((item) => item.slug === id);
+        if (!found) {
+          setError("No se encontró este producto. Puede que el registro duplicado ya haya sido eliminado.");
+          return;
         }
+        const raw = found as Product & { slug?: string }; const normalized = { ...raw, id: String(raw.id || raw.slug) };
+        setProduct(normalized);
+        setImages(listValue(normalized.images).map((url) => ({ url })));
       })
       .catch(() => setError("No se pudo cargar el producto."));
   }, []);
