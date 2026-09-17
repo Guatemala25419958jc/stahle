@@ -16,7 +16,7 @@ function dedupeProducts<T extends { id:string; name:string }>(items:T[]) {
   const byKey = new Map<string, T>();
   for (const item of items) {
     const key = item.name.trim().toLowerCase().replace(/\\s+/g, " ");
-    if (key) byKey.set(key, item);
+    if (key) { const previous = byKey.get(key); if (!previous || (previous.id === key && item.id !== key)) byKey.set(key, item); }
   }
   return [...byKey.values()];
 }
