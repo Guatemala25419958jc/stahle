@@ -13,7 +13,8 @@ function parse<T>(value: unknown, fallback: T): T {
 function normalize(row: Record<string, unknown>): Product {
   const base = seedProducts.find((item) => item.slug === String(row.id || row.slug));
   const materials = parse<string[]>(row.materials, base?.materials || []);
-  const images = parse<string[]>(row.images, base?.images || []);\n  const stats = parse<[string, string, string][]>(row.stats, base?.stats || []);
+  const images = parse<string[]>(row.images, base?.images || []);
+  const stats = parse<[string, string, string][]>(row.stats, base?.stats || []);
   return {
     ...(base || {
       slug: String(row.id || row.slug),
