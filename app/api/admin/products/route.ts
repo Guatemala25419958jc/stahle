@@ -47,9 +47,9 @@ export async function GET() {
     const db = bindings().db;
     if (db) {
       const result = await db.prepare("SELECT * FROM products ORDER BY created_at DESC").all();
-      return NextResponse.json(dedupe(result.results as ProductInput[]));
+      return NextResponse.json(dedupe(result.results as ProductInput[]), { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } });
     }
-    return NextResponse.json(await readStored());
+    return NextResponse.json(await readStored(), { headers: { "Cache-Control": "no-store, no-cache, must-revalidate" } });
   } catch { return NextResponse.json({ error: "No se pudo consultar el catálogo" }, { status: 500 }); }
 }
 
