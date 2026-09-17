@@ -13,14 +13,14 @@ function parse<T>(value: unknown, fallback: T): T {
 function normalize(row: Record<string, unknown>): Product {
   const base = seedProducts.find((item) => item.slug === String(row.id || row.slug));
   const materials = parse<string[]>(row.materials, base?.materials || []);
-  const images = parse<string[]>(row.images, base?.images || []);
+  const images = parse<string[]>(row.images, base?.images || []);\n  const stats = parse<[string, string, string][]>(row.stats, base?.stats || []);
   return {
     ...(base || {
       slug: String(row.id || row.slug),
       type: "Mueble",
       status: "Fabricación bajo pedido",
       tagline: "",
-      stats: [["01", "Diseño", "a medida"], ["02", "Material", "seleccionado"], ["03", "Uso", "oficina"]],
+      stats: [],
       description: "",
       materials: [],
       dimensions: "",
@@ -47,7 +47,7 @@ export default function Page({ params }: { params: Promise<{ slug: string }> }) 
     const local = JSON.parse(window.localStorage.getItem("stahle_admin_products") || "[]") as Record<string, unknown>[];
     const localMatch = local.find((item) => String(item.id || item.slug) === slug);
     if (localMatch) setProduct(normalize(localMatch));
-    fetch("/api/admin/products").then((response) => response.ok ? response.json() : []).then((rows: Record<string, unknown>[]) => {
+    fetch("/api/admin/products", { cache: "no-store" }).then((response) => response.ok ? response.json() : []).then((rows: Record<string, unknown>[]) => {
       const match = rows.find((item) => String(item.id || item.slug) === slug);
       if (match) setProduct(normalize(match));
     }).catch(() => undefined);
