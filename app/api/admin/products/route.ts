@@ -17,10 +17,22 @@ function authorized(request: Request) {
 function seed() {
   return seedProducts.map((item) => ({ ...item, id: item.slug }));
 }
+function productKey(item: Partial<ProductInput>) {
+  return String(item.slug || item.id || item.name || "").trim().toLowerCase().replace(/\\s+/g, " ");
+}
+function dedupe(items: ProductInput[]) {
+  const byKey = new Map<string, ProductInput>();
+  for (const item of items) {
+    const key = productKey(item);
+    if (!key) continue;
+    byKey.set(key, item);
+  }
+  return [...byKey.values()];
+}
 async function readStored(): Promise<ProductInput[]> {
   const object = await bucket()?.get(CATALOG_KEY);
   if (!object) return seed();
-  try { return JSON.parse(await new Response(object.body).text()) as ProductInput[]; } catch { return seed(); }
+  try { return dedupe(JSON.parse(await new Response(object.body).text()) as ProductInput[]); } catch { return seed(); }
 }
 async function writeStored(items: ProductInput[]) {
   const storage = bucket();
@@ -33,7 +45,7 @@ export async function GET() {
     const db = database();
     if (db) {
       const result = await db.prepare("SELECT * FROM products ORDER BY created_at DESC").all();
-      return NextResponse.json(result.results);
+      return NextResponse.json(dedupe(result.results as ProductInput[]));
     }
     return NextResponse.json(await readStored());
   } catch { return NextResponse.json({ error: "No se pudo consultar el catálogo" }, { status: 500 }); }
@@ -46,13 +58,18 @@ export async function POST(request: Request) {
     if (!body.name || !body.collection || !body.room) return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 });
     const db = database();
     if (db) {
-      const id = body.id ?? crypto.randomUUID();
-      await db.prepare("INSERT INTO products (id,name,description,collection,room,materials,dimensions,price,images) VALUES (?,?,?,?,?,?,?,?,?)").bind(id, body.name, body.description ?? "", body.collection, body.room, JSON.stringify(body.materials ?? []), body.dimensions ?? "", body.price ?? "Precio por confirmar", JSON.stringify(body.images ?? [])).run();
-      return NextResponse.json({ id }, { status: 201 });
+      const existing = body.id ? null : await db.prepare("SELECT id FROM products WHERE lower(name)=lower(?) LIMIT 1").bind(body.name).first<{ id: string }>();
+      const id = body.id ?? existing?.id ?? crypto.randomUUID();
+      if (existing?.id) {
+        await db.prepare("UPDATE products SET description=?,collection=?,room=?,materials=?,dimensions=?,price=?,images=?,updated_at=CURRENT_TIMESTAMP WHERE id=?").bind(body.description ?? "", body.collection, body.room, JSON.stringify(body.materials ?? []), body.dimensions ?? "", body.price ?? "Precio por confirmar", JSON.stringify(body.images ?? []), id).run();
+      } else {
+        await db.prepare("INSERT INTO products (id,name,description,collection,room,materials,dimensions,price,images) VALUES (?,?,?,?,?,?,?,?,?)").bind(id, body.name, body.description ?? "", body.collection, body.room, JSON.stringify(body.materials ?? []), body.dimensions ?? "", body.price ?? "Precio por confirmar", JSON.stringify(body.images ?? [])).run();
+      }
+      return NextResponse.json({ id }, { status: existing?.id ? 200 : 201 });
     }
     const items = await readStored();
     const id = body.id && body.id !== "new" ? body.id : crypto.randomUUID();
-    await writeStored([...items.filter((item) => item.id !== id), { ...body, id }]);
+    await writeStored(dedupe([...items.filter((item) => item.id !== id && productKey(item) !== productKey(body)), { ...body, id }]));
     return NextResponse.json({ id }, { status: 201 });
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "No se pudo guardar el producto" }, { status: 500 }); }
 }
@@ -79,8 +96,15 @@ export async function DELETE(request: Request) {
     const id = new URL(request.url).searchParams.get("id");
     if (!id) return NextResponse.json({ error: "Falta el id del producto" }, { status: 400 });
     const db = database();
-    if (db) await db.prepare("DELETE FROM products WHERE id=?").bind(id).run();
-    else await writeStored((await readStored()).filter((item) => item.id !== id));
+    if (db) {
+      const target = await db.prepare("SELECT name FROM products WHERE id=? LIMIT 1").bind(id).first<{ name: string }>();
+      if (target?.name) await db.prepare("DELETE FROM products WHERE id=? OR lower(name)=lower(?)").bind(id, target.name).run();
+      else await db.prepare("DELETE FROM products WHERE id=?").bind(id).run();
+    } else {
+      const items = await readStored();
+      const target = items.find((item) => item.id === id);
+      await writeStored(items.filter((item) => item.id !== id && (!target || productKey(item) !== productKey(target))));
+    }
     return NextResponse.json({ ok: true });
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "No se pudo eliminar el producto" }, { status: 500 }); }
 }
