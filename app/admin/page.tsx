@@ -12,6 +12,14 @@ type Quote = { id:number; customer:string; project:string; status:typeof statuse
 const initialQuotes: Quote[] = [
   {id:1, customer:"Aún no hay solicitudes", project:"Las nuevas cotizaciones aparecerán aquí", status:"Pendiente", date:"—"}
 ];
+function dedupeProducts<T extends { id:string; name:string }>(items:T[]) {
+  const byKey = new Map<string, T>();
+  for (const item of items) {
+    const key = item.name.trim().toLowerCase().replace(/\\s+/g, " ");
+    if (key) byKey.set(key, item);
+  }
+  return [...byKey.values()];
+}
 
 export default function AdminPage() {
   const [password, setPassword] = useState("");
@@ -47,7 +55,7 @@ export default function AdminPage() {
       const fallback = publicProducts.map((p) => ({id:p.slug,name:p.name,collection:p.collection,room:"sala",images:p.images}));
       const remote = Array.isArray(items) && items.length ? items : fallback;
       const pending = local.filter((localItem) => !remote.some((item) => String(item.id) === String(localItem.id)));
-      const merged = [...remote, ...pending];
+      const merged = dedupeProducts([...remote, ...pending]);
       setProducts(merged);
       if (authenticated && pending.length) {
         const migrated = [];
@@ -57,7 +65,7 @@ export default function AdminPage() {
         }
         if (migrated.length) window.localStorage.setItem("stahle_admin_products", JSON.stringify(local.filter((item) => !migrated.includes(item.id))));
       }
-    }).catch(() => setProducts(local)); fetch("/api/admin/customers").then(r => r.ok ? r.json() : []).then(setCustomers).catch(() => setCustomers([])); }, []);
+    }).catch(() => setProducts(dedupeProducts(local))); fetch("/api/admin/customers").then(r => r.ok ? r.json() : []).then(setCustomers).catch(() => setCustomers([])); }, []);
   const addCustomer = async (event: React.FormEvent) => { event.preventDefault(); const response = await fetch("/api/admin/customers", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name:customerName, phone:customerPhone, email:customerEmail})}); if(response.ok){ const item=await response.json(); setCustomers([...customers,{id:item.id,name:customerName,phone:customerPhone,email:customerEmail}]); setCustomerName(""); setCustomerPhone(""); setCustomerEmail(""); } };
   const addQuote = async (event: React.FormEvent) => { event.preventDefault(); const response=await fetch("/api/admin/quotes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({customer_name:quoteCustomer,product_type:quoteProject})}); if(response.ok){setQuotes([{id:Date.now(),customer:quoteCustomer,project:quoteProject,status:"Pendiente",date:new Date().toLocaleDateString("es-GT")},...quotes]);setQuoteCustomer("");setQuoteProject("");} };
   const addProduct = async (event: React.FormEvent) => { event.preventDefault(); setSaveError(""); const uploaded:string[]=[]; for (const file of imageFiles) { const form=new FormData(); form.append("file",file); const upload=await fetch("/api/admin/images",{method:"POST",body:form}); if(upload.ok){ const item=await upload.json(); uploaded.push(item.url); } } const response = await fetch("/api/admin/products", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({name:productName, collection:productCollection, room:productRoom, description:productDescription, materials:productMaterials.split(",").map(x=>x.trim()).filter(Boolean), dimensions:productDimensions, price:productPrice || "Precio por confirmar", images:(() => { const all=[...uploaded,...productImages.split(",").map(x=>x.trim()).filter(Boolean)]; if(all.length && coverIndex>0){ const cover=all.splice(coverIndex,1)[0]; all.unshift(cover); } return all; })()})}); if(response.ok){ const item=await response.json(); setProducts([...products,{id:item.id,name:productName,collection:productCollection,room:productRoom,images:uploaded}]); setProductName(""); setProductDescription(""); setProductMaterials(""); setProductDimensions(""); setProductPrice(""); setImageFiles([]); setCoverIndex(0); } else { const error=await response.json().catch(()=>({})); setSaveError(error.error ?? "No se pudo guardar. Verifica que el build más reciente esté activo."); } };
