@@ -46,7 +46,7 @@ export default function EditarProducto() {
       .then((items: Product[]) => {
         const found = items.find((item) => String(item.id) === id) || catalog.find((item) => item.slug === id);
         if (found) {
-          const normalized = { ...found, id: String(found.id || (found as Product & { slug?: string }).slug) };
+          const raw = found as Product & { slug?: string }; const normalized = { ...raw, id: String(raw.id || raw.slug) };
           setProduct(normalized);
           setImages(listValue(normalized.images).map((url) => ({ url })));
         }
