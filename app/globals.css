@@ -231,3 +231,6 @@
 /* Isologo oficial visible sobre cualquier fondo */
 .admin-logo-auth{display:block!important;width:128px!important;height:128px!important;object-fit:contain!important;opacity:1!important;visibility:visible!important;mix-blend-mode:normal!important;background:#0d0b0a!important;border:1px solid #b58a5a!important;border-radius:0!important;margin:0 auto 24px!important}
 .admin-brand img{display:block!important;opacity:1!important;visibility:visible!important;mix-blend-mode:normal!important;background:#0d0b0a!important}
+
+/* Acceso oscuro para integrar el fondo del isologo */
+.admin-auth-card{background:#0d0b0a!important;color:#eee7dd!important;border:1px solid #b58a5a!important;border-top-width:3px!important;box-shadow:0 26px 90px #000b!important}.admin-auth-card h1{color:#eee7dd!important}.admin-auth-card>p:not(.admin-eyebrow){color:#c3b7aa!important}.admin-auth-card label{color:#c9b9a8!important}.admin-auth-card input{background:#171310!important;color:#eee7dd!important;border-color:#806344!important}.admin-auth-card input::placeholder{color:#8e8073}.admin-auth-card .admin-logo-auth{background:#0d0b0a!important;border-color:#b58a5a!important}.admin-auth-card .admin-eyebrow{color:#d0a16d!important}
