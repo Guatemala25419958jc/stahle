@@ -109,7 +109,14 @@ export default function EditarProducto() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...productPayload, images: ordered, materials: materialValue(product.materials).split(",").map((x) => x.trim()).filter(Boolean) }),
       });
-      if (!response.ok) throw new Error("No se pudieron guardar los cambios.");
+      if (!response.ok) {
+        const localId = isNew ? crypto.randomUUID() : product.id;
+        const localProduct = { ...product, id: localId, images: ordered, materials: materialValue(product.materials).split(",").map((x) => x.trim()).filter(Boolean) };
+        const stored = JSON.parse(window.localStorage.getItem("stahle_admin_products") || "[]") as Product[];
+        window.localStorage.setItem("stahle_admin_products", JSON.stringify([...stored.filter((item) => item.id !== localId), localProduct]));
+        setImages(ordered.map((url) => ({ url }))); setCover(0); setMessage("Cambios guardados en este dispositivo.");
+        return;
+      }
       setImages(ordered.map((url) => ({ url }))); setCover(0); setMessage("Cambios guardados correctamente.");
     } catch (caught) { setError(caught instanceof Error ? caught.message : "No se pudo guardar."); }
     finally { setSaving(false); }
