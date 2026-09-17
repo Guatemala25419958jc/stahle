@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { BarChart3, ClipboardList, LogOut, Package, Plus, Search, Settings2, Users, Trash2, Star } from "lucide-react";
+import { BarChart3, ClipboardList, LogOut, Package, Plus, Search, Settings2, Users, Star } from "lucide-react";
 import { products as publicProducts } from "../data";
 import { AdminSummary } from "./AdminSummary";
 
