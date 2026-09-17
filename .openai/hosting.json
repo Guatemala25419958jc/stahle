@@ -1,5 +1,5 @@
 {
-  "d1": null,
-  "r2": null,
-  "project_id": "appgprj_6aa09fd888588191b4e16faafc39d31e"
+  "project_id": "appgprj_6aa09fd888588191b4e16faafc39d31e",
+  "d1": { "DB": "stahle-db" },
+  "r2": { "IMAGES": "stahle-images" }
 }
