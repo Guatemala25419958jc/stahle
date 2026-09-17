@@ -63,7 +63,13 @@ export default function EditarProducto() {
   const addFiles = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
-    setImages((current) => [...current, ...files.map((file) => ({ url: URL.createObjectURL(file), pending: file }))]);
+    if (replaceIndex !== null) {
+      const file = files[0];
+      setImages((current) => current.map((image, index) => index === replaceIndex ? { url: URL.createObjectURL(file), pending: file } : image));
+      setReplaceIndex(null);
+    } else {
+      setImages((current) => [...current, ...files.map((file) => ({ url: URL.createObjectURL(file), pending: file }))]);
+    }
     event.target.value = "";
   };
 
