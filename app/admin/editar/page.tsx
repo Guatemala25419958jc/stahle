@@ -33,7 +33,7 @@ function materialValue(value: Product["materials"]): string {
 export default function EditarProducto() {
   const [product, setProduct] = useState<Product | null>(null);
   const [images, setImages] = useState<GalleryImage[]>([]);
-  const [cover, setCover] = useState(0);
+  const [cover, setCover] = useState(0);\n  const [replaceIndex, setReplaceIndex] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
@@ -123,7 +123,7 @@ export default function EditarProducto() {
           <div className="admin-edit-thumbs">
             {images.map((image, index) => <div className={index === cover ? "admin-edit-thumb active" : "admin-edit-thumb"} key={image.url + index}>
               <button type="button" onClick={() => setCover(index)} aria-label={index === cover ? "Portada seleccionada" : "Seleccionar como portada"}><img src={image.url} alt={"Fotografía " + (index + 1)} />{index === cover && <span className="admin-cover-badge"><Star size={12} /> Portada</span>}</button>
-              <div className="admin-thumb-actions"><button type="button" onClick={() => setCover(index)} title="Elegir portada"><Star size={14} /></button><button type="button" onClick={() => removeImage(index)} title="Quitar fotografía"><X size={14} /></button></div>
+              <div className="admin-thumb-actions"><button type="button" onClick={() => { setReplaceIndex(index); fileInput.current?.click(); }} title="Cambiar fotografía"><Pencil size={14} /></button><button type="button" onClick={() => removeImage(index)} title="Quitar fotografía"><X size={14} /></button></div>
             </div>)}
             <button type="button" className="admin-add-photo-tile" onClick={() => fileInput.current?.click()}><ImagePlus size={25} /><span>Agregar<br />fotografías</span></button>
           </div>
