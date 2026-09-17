@@ -103,7 +103,7 @@ export default function EditarProducto() {
       const ordered = uploaded.map((image) => image.url);
       const selectedCover = ordered[cover];
       if (selectedCover) { ordered.splice(cover, 1); ordered.unshift(selectedCover); }
-      const { id: _id, ...productPayload } = product;
+      const productPayload = isNew ? (({ id: _id, ...rest }) => rest)(product) : product;
       const response = await fetch("/api/admin/products", {
         method: isNew ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
