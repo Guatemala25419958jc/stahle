@@ -85,8 +85,6 @@ export const products: Product[] = [{
   "/productos/vertice/vinera-reserva/Gemini_Generated_Image_xcz26mxcz26mxcz2.jfif"
  ]
  }
-,{
- slug:"escritorio-nexo",name:"Escritorio Nexo",collection:"savia",room:"oficina",type:"Escritorio",price:"Precio por confirmar",status:"Fabricación bajo pedido",stats:[["01","Madera","tono nogal"],["02","Metal","negro mate"],["03","Uso","oficina"]],tagline:"Un espacio de trabajo con carácter.",description:"Escritorio de líneas limpias que combina la calidez de la madera con la solidez del metal. Su cubierta amplia ofrece un espacio cómodo y ordenado para trabajar, estudiar o crear. Una pieza sobria y elegante para oficinas contemporáneas.",materials:["Madera tono nogal","Estructura de metal tubular con acabado negro mate"],dimensions:"160 × 70 × 75 cm (largo × ancho × alto). Medidas personalizables bajo cotización.",images:["/productos/escritorio-nexo/portada.jfif","/productos/escritorio-nexo/vista-superior.jfif"]
-}];
+];
 export const getCollection=(slug:string)=>collections.find(c=>c.slug===slug);
 export const getProduct=(slug:string)=>products.find(p=>p.slug===slug);
