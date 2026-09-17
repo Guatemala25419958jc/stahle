@@ -119,7 +119,7 @@ export default function EditarProducto() {
         const localProduct = { ...product, id: localId, images: ordered, materials: materialValue(product.materials).split(",").map((x) => x.trim()).filter(Boolean) };
         const stored = JSON.parse(window.localStorage.getItem("stahle_admin_products") || "[]") as Product[];
         window.localStorage.setItem("stahle_admin_products", JSON.stringify([...stored.filter((item) => item.id !== localId), localProduct]));
-        setImages(ordered.map((url) => ({ url }))); setCover(0); setMessage("Cambios guardados en este dispositivo.");
+        setImages(ordered.map((url) => ({ url }))); setCover(0); setError("No se pudo publicar el producto. Se guardó como borrador solo en este navegador; inténtalo de nuevo cuando el almacenamiento esté disponible.");
         return;
       }
       setImages(ordered.map((url) => ({ url }))); setCover(0); setMessage("Cambios guardados correctamente.");
