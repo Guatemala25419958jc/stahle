@@ -31,7 +31,8 @@ function materialValue(value: Product["materials"]): string {
 }
 
 export default function EditarProducto() {
-  const [product, setProduct] = useState<Product | null>(null);\n  const [isNew, setIsNew] = useState(false);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isNew, setIsNew] = useState(false);
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [cover, setCover] = useState(0);
   const [replaceIndex, setReplaceIndex] = useState<number | null>(null);
@@ -102,8 +103,9 @@ export default function EditarProducto() {
       const ordered = uploaded.map((image) => image.url);
       const selectedCover = ordered[cover];
       if (selectedCover) { ordered.splice(cover, 1); ordered.unshift(selectedCover); }
+      const { id: _id, ...productPayload } = product;
       const response = await fetch("/api/admin/products", {
-        method: "PUT",
+        method: isNew ? "POST" : "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...productPayload, images: ordered, materials: materialValue(product.materials).split(",").map((x) => x.trim()).filter(Boolean) }),
       });
