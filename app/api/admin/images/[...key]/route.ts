@@ -4,7 +4,9 @@ type ImageObject = { body: ReadableStream; httpMetadata?: { contentType?: string
 type ImageBucket = { get(key: string): Promise<ImageObject | null> };
 
 export async function GET(_request: Request, context: { params: Promise<{ key: string[] }> }) {
-  const value = (process.env as unknown as { IMAGES?: ImageBucket }).IMAGES;
+  const env = (process.env as unknown as { IMAGES?: ImageBucket }).IMAGES;
+  const runtime = globalThis as unknown as { IMAGES?: ImageBucket };
+  const value = env ?? runtime.IMAGES;
   if (!value) return NextResponse.json({ error: "R2 binding unavailable" }, { status: 500 });
   const { key } = await context.params;
   const object = await value.get(key.join("/"));
