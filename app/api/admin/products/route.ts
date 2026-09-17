@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { products as seedProducts } from "../../../data";
 
-type ProductInput = { id?: string; name: string; description?: string; collection: string; room: string; materials?: string[]; dimensions?: string; price?: string; images?: string[] };
+type ProductInput = { id?: string; slug?: string; name: string; description?: string; collection: string; room: string; materials?: string[]; dimensions?: string; price?: string; images?: string[] };
 type Bucket = { get(key: string): Promise<{ body: ReadableStream } | null>; put(key: string, value: string, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown> };
 const CATALOG_KEY = "products/catalog.json";
 
@@ -25,7 +25,8 @@ function dedupe(items: ProductInput[]) {
   for (const item of items) {
     const key = productKey(item);
     if (!key) continue;
-    byKey.set(key, item);
+    const previous = byKey.get(key);
+    if (!previous || (previous.id === key && item.id !== key)) byKey.set(key, item);
   }
   return [...byKey.values()];
 }
