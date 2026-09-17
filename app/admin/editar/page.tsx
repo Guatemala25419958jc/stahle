@@ -129,9 +129,20 @@ export default function EditarProducto() {
 
   const removeProduct = async () => {
     if (!product || !window.confirm("¿Eliminar este producto? Esta acción no se puede deshacer.")) return;
+    const stored = JSON.parse(window.localStorage.getItem("stahle_admin_products") || "[]") as Product[];
+    const remaining = stored.filter((item) => item.id !== product.id && item.name.trim().toLowerCase() !== product.name.trim().toLowerCase());
     const response = await fetch("/api/admin/products?id=" + encodeURIComponent(product.id), { method: "DELETE" });
-    if (response.ok) window.location.href = "/admin";
-    else setError("No se pudo eliminar el producto.");
+    if (response.ok) {
+      window.localStorage.setItem("stahle_admin_products", JSON.stringify(remaining));
+      window.location.href = "/admin";
+    } else {
+      window.localStorage.setItem("stahle_admin_products", JSON.stringify(remaining));
+      if (remaining.length !== stored.length) window.location.href = "/admin";
+      else {
+        const detail = await response.json().catch(() => ({})) as { error?: string };
+        setError(detail.error || "No se pudo eliminar el producto.");
+      }
+    }
   };
 
   if (!product) return <main className="admin-edit-page admin-edit-loading"><a href="/admin"><ArrowLeft size={16} /> Volver a la galería</a><p>{error || "Cargando producto…"}</p></main>;
