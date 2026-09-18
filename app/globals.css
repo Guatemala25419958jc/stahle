@@ -295,3 +295,6 @@
 .admin-edit-loading{display:grid;place-items:center;align-content:center;gap:15px}
 @media(max-width:1050px){.admin-edit-sidebar{width:210px}.admin-edit-layout{grid-template-columns:1fr}.admin-edit-main-image{height:min(58vw,520px)}}
 @media(max-width:650px){.admin-edit-page{display:block}.admin-edit-sidebar{width:auto;padding:15px}.admin-edit-logo{padding:0 10px 15px}.admin-edit-logo img{width:125px}.admin-edit-sidebar nav{display:flex}.admin-edit-sidebar nav a{padding:10px 12px;font-size:12px}.admin-edit-sidebar-note{display:none}.admin-edit-content{padding:25px 15px 45px}.admin-edit-titlebar{display:block}.admin-edit-titlebar h1{font-size:38px}.admin-outline-button{margin-top:20px;display:inline-flex}.admin-edit-gallery,.admin-edit-fields{padding:14px}.admin-edit-main-image{height:330px}.admin-edit-thumbs{grid-template-columns:repeat(3,1fr)}.admin-edit-thumb,.admin-add-photo-tile{height:95px}.admin-edit-row{grid-template-columns:1fr}}
+
+/* La portada muestra la fotografía completa y evita la franja oscura inferior. */
+.hero{background-position:center top;background-color:#0d0b0a}
