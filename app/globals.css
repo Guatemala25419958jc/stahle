@@ -298,3 +298,7 @@
 
 /* La portada muestra la fotografía completa y evita la franja oscura inferior. */
 .hero{background-position:center top;background-color:#0d0b0a}
+
+/* Recorte vertical del hero: elimina la zona oscura inferior de la imagen. */
+.hero{background-size:auto 135%;background-position:center top}
+@media(max-width:900px){.hero{background-size:cover;background-position:center top}}
